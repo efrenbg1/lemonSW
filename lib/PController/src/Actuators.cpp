@@ -1,15 +1,16 @@
 #include "PController.h"
 
-PController::PController(unsigned int _GPIO, MqTLS* _mqtls, EzVault* _vault){
+PController::PController(unsigned int _GPIO, String _server, MqTLS* _mqtls, EzVault* _vault){
     GPIO = _GPIO;
     mqtls = _mqtls;
     vault = _vault;
+    address = _server;
 }
 
 void PController::on(void){
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
-    delay(100);
+    delay(200);
     digitalWrite(GPIO,LOW);
     pinMode(GPIO,INPUT);
     delay(100);
@@ -21,7 +22,7 @@ void PController::on(void){
 }
 
 void PController::off(void){
-    mqtls->publish(action, "4");
+    mqtls->publish(topic,"1", "4");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
     delay(100);
@@ -36,7 +37,7 @@ void PController::off(void){
 }
 
 void PController::force(void){
-    mqtls->publish(action, "4");
+    mqtls->publish(topic,"1", "4");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
     action_force = true;

@@ -7,10 +7,10 @@ EzVault::EzVault(unsigned int size){
 
 //// Avoid Config ////
 void EzVault::avoid_config(void){
-    ssid = "SSID";
-    wifi_pw = "PASS";
-    user = "efrenbg1";
-    pw = "PASS2";
+    ssid = "MOVISTAR_E578";
+    wifi_pw = "BoYaRiZo2";
+    user = "efren@boyarizo.es";
+    pw = "1Q2w3e4r";
     save(ssid,wifi_pw,user,pw);
 }
 

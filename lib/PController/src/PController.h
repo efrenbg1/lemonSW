@@ -16,13 +16,13 @@ class PController {
         unsigned int check = 0;
         unsigned int changes = 0;
         char stat = '0';
-        String status = WiFi.macAddress();
-        String action = "_" + status;
-        String settings = "!" + status;
+        String topic = WiFi.macAddress();
+        String address = "";
+        int failed = 0;
         MqTLS* mqtls;
         EzVault* vault;
     public:
-        PController(unsigned int, MqTLS*, EzVault*);
+        PController(unsigned int, String, MqTLS*, EzVault*);
         void on(void);
         void off(void);
         void force(void);

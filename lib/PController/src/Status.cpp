@@ -6,7 +6,7 @@ char PController::getStatus(void){
 
 void PController::loop(void){
     if(sample < 14){
-        if(analogRead(A0) > 200){
+        if(analogRead(A0) > 100){
             check++;
             if(last == 0){
                 changes++;
@@ -31,7 +31,7 @@ void PController::loop(void){
                 stat = '2';
             }
         } else if(changes == 1){
-            if(analogRead(A0) > 200){
+            if(analogRead(A0) > 100){
                 if(last == 0){
                     changes++;
                 }
@@ -69,29 +69,29 @@ void PController::loop(void){
             if(stat == '2'){
                 action_off = false;
                 timeout=0;
-                mqtls->publish(action, "6");
+                mqtls->publish(topic, "1", "6");
             } else if (stat == '0'){
                 action_off = false;
                 timeout=0;
-                mqtls->publish(action, "6");
+                mqtls->publish(topic, "1", "6");
             } else if (stat == '1'){
                 if(timeout > 15){
                     action_off = false;
-                    mqtls->publish(action, "5");
+                    mqtls->publish(topic, "1", "5");
                 }
             }
         }
         if(action_on == true){
             action_on = false;
             if(stat == '2'){
-                mqtls->publish(action, "5");
+                mqtls->publish(topic, "1", "5");
             } else if (stat == '0'){
-                mqtls->publish(action, "5");
+                mqtls->publish(topic, "1", "5");
             } else if (stat == '1'){
-                mqtls->publish(action, "6");
+                mqtls->publish(topic, "1", "6");
             }
         }
-        mqtls->publish(status, String(stat));
+        mqtls->publish(topic, "0", String(stat));
         check = 0;
         changes = 0;
         last = 2;

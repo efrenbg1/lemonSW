@@ -2,14 +2,21 @@
 
 void PController::callback(void) {
   String msg;
-  int resp = mqtls->retrieve(action, &msg);
+  int resp = mqtls->retrieve(topic, "1", &msg);
   if(resp == -1){
     Serial.print("Connecting to server...");
-    if(mqtls->connect("rmote.app", 2443, vault->getUser(), vault->getPW(), "95") == 0){
-        //PUT LAST-WILL
+    if(mqtls->connect(address, 2443, vault->getUser(), vault->getPW()) == 0){
+        mqtls->lastwill(topic, "0", "9");
         Serial.println("Done");
+        failed = 0;
     } else {
+        failed++;
         Serial.println("Failed");
+        if(failed > 15){
+          failed = 0;
+          mqtls->disconnect();
+          Recovery recovery(2, "SuperPowers4All", mqtls, vault);
+        }
     }
   } else if(resp != 2 && resp != 7){
     Serial.print("Failed to retrive data: ");
@@ -19,7 +26,7 @@ void PController::callback(void) {
     Serial.println(msg);
   if(msg.equals("0")){
     Serial.print("Publish: ");
-    Serial.println(mqtls->publish(action, "4"));
+    Serial.println(mqtls->publish(topic, "1", "4"));
     char stat = getStatus();
     switch(stat){
       case '0':
@@ -32,7 +39,7 @@ void PController::callback(void) {
           on();
           break;
       default:
-          mqtls->publish(action, "5");
+          mqtls->publish(topic, "1", "5");
     }
   } else if(msg.equals("1")){
     force();
@@ -42,8 +49,8 @@ void PController::callback(void) {
     loop();
     on();
   } else if(msg.equals("9")){
-    mqtls->publish(WiFi.macAddress(), "8");
-    mqtls->publish(action, "6");
+    mqtls->publish(topic, "0", "8");
+    mqtls->publish(topic, "1", "6");
     delay(500);
     mqtls->disconnect();
     delay(5000);
