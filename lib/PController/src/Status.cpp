@@ -69,15 +69,12 @@ void PController::loop(void)
             stat = '2';
         }
 
-        
-
         mqtls->publish(topic, "0", String(stat));
 
         //For debugging purposes only
         debug = debug + "|" + changes + "|" + on;
         Serial.println(debug);
         mqtls->publish(topic, "2", debug);
-
 
         //actions cheker
         if (action_force == true)
@@ -96,41 +93,31 @@ void PController::loop(void)
         if (action_off == true)
         {
             timeout++;
-            if (timeout > 10)
+            if (stat == '0' || stat == '2')
             {
                 action_off = false;
-                switch (stat)
-                {
-                case '2':
-                    mqtls->publish(topic, "1", "6");
-                    break;
-                case '1':
-                    mqtls->publish(topic, "1", "5");
-                    break;
-                case '0':
-                    mqtls->publish(topic, "1", "6");
-                    break;
-                }
+                mqtls->publish(topic, "1", "6");
+            }
+            else if (timeout > 20)
+            {
+                action_off = false;
+                mqtls->publish(topic, "1", "5");
             }
         }
 
         if (action_on == true)
         {
-            action_on = false;
-            switch (stat)
+            timeout++;
+            if (stat == '1')
             {
-            case '2':
-                mqtls->publish(topic, "1", "5");
-                break;
-            case '1':
+                action_on = false;
                 mqtls->publish(topic, "1", "6");
-                break;
-            case '0':
+            }
+            else if (timeout > 2)
+            {
+                action_on = false;
                 mqtls->publish(topic, "1", "5");
-                break;
             }
         }
     }
 }
-
-

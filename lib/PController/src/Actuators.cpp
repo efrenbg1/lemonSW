@@ -10,20 +10,21 @@ PController::PController(unsigned int _GPIO, String _server, MqTLS* _mqtls, EzVa
 void PController::on(void){
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
-    delay(250);
+    delay(500);
     digitalWrite(GPIO,LOW);
     pinMode(GPIO,INPUT);
     action_off = false;
     action_on = true;
     action_force = false;
     sample = 0;
+    timeout = 0;
 }
 
 void PController::off(void){
     mqtls->publish(topic,"1", "4");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
-    delay(250);
+    delay(500);
     digitalWrite(GPIO,LOW);
     pinMode(GPIO,INPUT);
     action_off = true;

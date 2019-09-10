@@ -11,6 +11,7 @@ void PController::callback(void)
         if (mqtls->connect(address, 2443, vault->getUser(), vault->getPW()) == 0)
         {
             mqtls->lastwill(topic, "0", "9");
+            mqtls->publish(topic, "1", "6");
             Serial.println("Done");
             failed = 0;
         }
