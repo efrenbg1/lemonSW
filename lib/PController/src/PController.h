@@ -12,9 +12,7 @@ class PController {
         unsigned int GPIO;
         unsigned int sample = 0;
         unsigned int timeout = 0;
-        unsigned int last = 2;
-        unsigned int check = 0;
-        unsigned int changes = 0;
+        int samples[10];
         char stat = '0';
         String topic = WiFi.macAddress();
         String address = "";

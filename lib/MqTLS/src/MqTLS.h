@@ -12,7 +12,6 @@ class MqTLS {
         int connect(String, int, String, String);
         int lastwill(String, String, String);
         int retrieve(String, String, String*);
-        void disconnect(void);
     private:
         String getlength(String &);
 };

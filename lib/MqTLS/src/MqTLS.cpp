@@ -1,13 +1,9 @@
 #include "MqTLS.h"
 
-void MqTLS::disconnect(void)
-{
-  client.stop();
-}
 
 MqTLS::MqTLS(String thumbprint)
 {
-  client.setTimeout(2000);
+  client.setTimeout(3000);
   client.setFingerprint(thumbprint.c_str());
 }
 
@@ -135,25 +131,17 @@ int MqTLS::connect(String addr, int port, String user, String pw)
   {
     client.print(String("MQS0" + getlength(user) + user + getlength(pw) + pw + "\n"));
     String line = "";
-    while (client.connected() || client.available() > 0)
-    {
-      if (client.available())
-      {
+    while (client.connected() || client.available() > 0) {
+      if (client.available()) {
         line = client.readStringUntil('\n');
         break;
       }
     }
-    if (line.indexOf("MQS0") == 0)
-    {
+    if (line.indexOf("MQS0") == 0) {
       return (0);
-    }
-    else
-    {
+    } else {
       return (9);
     }
   }
-  else
-  {
-    return (-1);
-  }
+  return (-1);
 }

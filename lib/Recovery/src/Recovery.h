@@ -20,7 +20,7 @@ class Recovery {
         String user;
         String pw;
     public:
-        Recovery(unsigned int, String, MqTLS*, EzVault*);
+        Recovery(unsigned int, MqTLS*, EzVault*);
     protected:
         void root(void);
         void scan(void);

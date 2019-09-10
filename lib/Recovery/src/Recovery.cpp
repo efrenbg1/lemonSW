@@ -2,7 +2,7 @@
 
 #define LED 2
 
-Recovery::Recovery(unsigned int timeout_reboot, String pw, MqTLS* _mqtls, EzVault* _vault){
+Recovery::Recovery(unsigned int timeout_reboot, MqTLS* _mqtls, EzVault* _vault){
   timeout_reboot = timeout_reboot * 60 * 1000;
   digitalWrite(LED, LOW);
   WiFi.disconnect();
@@ -14,7 +14,7 @@ Recovery::Recovery(unsigned int timeout_reboot, String pw, MqTLS* _mqtls, EzVaul
   Serial.println("Entering recovery...");
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAPConfig (ip, gateway, subnet);
-  WiFi.softAP(("lemonSW " + WiFi.macAddress().substring(12)).c_str(), pw.c_str());
+  WiFi.softAP(("lemonSW " + WiFi.macAddress().substring(12)).c_str());
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("HotSpot IP: ");
   Serial.println(myIP);
