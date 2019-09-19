@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+  <title>lemonSW minDashboard</title>
+  <style>
+    h1 {
+      text-shadow: 2px 1.5px red;
+      font-family: "Georgia", Times, serif;
+      padding-bottom: 25px;
+      margin-top: .2rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: "Georgia", Times, serif;
+      margin: 5%;
+      text-align: center;
+    }
+
+    body {
+      background-color: #2b3e4c;
+      color: #fff;
+      padding-left: 0%;
+      padding-top: 100px;
+    }
+
+    .b1 {
+      margin-left: auto;
+      padding: 8px 16px;
+      border: none;
+      background: red;
+      color: #f2f2f2;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      border-radius: 2px;
+    }
+
+    .b2 {
+      margin-left: auto;
+      padding: 8px 16px;
+      border: none;
+      background: #00BCD4;
+      color: #f2f2f2;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      border-radius: 2px;
+    }
+
+    .sub {
+      font-size: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <center clas="sub">
+    PC is:
+  </center>
+  <h1 id="status">ON<br></h1>
+  <h2 id="action">Turning on...<br></h2>
+  <div style="float: center; text-align: center; margin-bottom: 4rem;">
+    <button class="b1" type="button" onclick='power()'>POWER</button>
+  </div>
+  <div style="float: center; text-align: center;">
+    <button class="b2" type="button" onclick=''>Force off</button>
+    <button class="b2" type="button" onclick=''>Recovery</button>
+  </div>
+</body>
+<script>
+  var action = document.getElementById("action");
+  var status = document.getElementById("status");
+  function power(){
+    show(action);
+    action.innerText = "Waiting for response...";
+    req('/action/0', function(status, response){
+      if(status !== 200){
+        action.innerText = "Failed to communicate!"
+      } else {
+        hide(action);
+      }
+    });
+  }
+  function status(){
+    req('/status', function(status, response){
+      if(status === 200){
+        var stats = {'0': 'OFF', '1': 'ON', '2': 'SUSPENDED'}
+        status.innerText = stats[response];
+      }
+    });
+  }
+  function show(object) {
+    object.style.display = 'inline';
+    object.style.visibility = 'visible';
+  }
+  function hide(object) {
+    object.style.display = 'none';
+  }
+  function req(url, callback) {
+    let r = new XMLHttpRequest();
+    r.open('GET', url, true);
+    r.responseType = 'text';
+    r.onreadystatechange = function () {
+      if (r.readyState == 4) {
+        this.hideLoading();
+          callback(r.status, r.response);
+      }
+    }.bind(this);
+    r.send();
+  }
+</script>
+</html>

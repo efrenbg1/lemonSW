@@ -1,0 +1,42 @@
+#ifndef header_h
+#define header_h
+
+String file1=
+"<!DOCTYPE html>\r\n"
+"<html>\r\n"
+"<head>\r\n"
+"<style>body{height:100vh;padding:0;margin:0;overflow:hidden;background-color:#2b3e4c}.wrapper{position:relative;top:50%;width:100%;text-align:center;-webkit-transform:translateY(-50%);transform:translateY(-50%);z-index:1}.bubbles{position:absolute;top:0;width:44px;height:44px;margin:auto;border-radius:100%;-webkit-animation-name:up-down;animation-name:up-down;-webkit-animation-duration:1.3s;animation-duration:1.3s;-webkit-animation-timing-function:cubic-bezier(.42,0,.58,1);animation-timing-function:cubic-bezier(.42,0,.58,1);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;-webkit-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-direction:alternate;animation-direction:alternate}.tube{position:relative;display:inline-block;width:45px;height:200px;background-color:grey;border-radius:22px;overflow:hidden}.colored-tube{position:absolute;top:-80%;width:100%;height:100%;border-radius:22px;-webkit-animation-name:up-down;animation-name:up-down;-webkit-animation-duration:1.3s;animation-duration:1.3s;-webkit-animation-timing-function:cubic-bezier(.42,0,.58,1);animation-timing-function:cubic-bezier(.42,0,.58,1);-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;-webkit-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-direction:alternate;animation-direction:alternate}.ck1{background-color:#bc86e2}.ck2{background-color:#2bb3e8;-webkit-animation-delay:200ms;animation-delay:200ms}.ck3{background-color:#4eda7b;-webkit-animation-delay:300ms;animation-delay:300ms}.ck4{background-color:#ffd30e;-webkit-animation-delay:400ms;animation-delay:400ms}.ck5{background-color:#ff5a58;-webkit-animation-delay:500ms;animation-delay:500ms}#b1{background-color:#8861a4}#b2{background-color:#2495c1;-webkit-animation-delay:200ms;animation-delay:200ms}#b3{background-color:#48bb6d;-webkit-animation-delay:300ms;animation-delay:300ms}#b4{background-color:#f1c500;-webkit-animation-delay:400ms;animation-delay:400ms}#b5{background-color:#f35957;-webkit-animation-delay:500ms;animation-delay:500ms}@-webkit-keyframes up-down{0%{top:0}100%{top:156px}}@keyframes up-down{0%{top:0}100%{top:156px}}h1{font-size:xx-large;color:#fff;width:100%;text-align:center;margin:0;position:absolute;top:15px;left:50%;transform:translate(-50%,-50%);letter-spacing:4px;top:30%;font-weight:bold}h2{font-size:large;color:#fff;width:100%;text-align:center;margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);letter-spacing:4px;top:80%;font-weight:bold}h3{font-size:large;color:#fff;width:100%;text-align:center;margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);letter-spacing:4px;top:85%;font-weight:bold}</style>\r\n"
+"<meta charset=UTF-8>\r\n"
+"</head>\r\n"
+"<body>\r\n"
+"<h1>All settings saved. Rebooting...</h1>\r\n"
+"<div class=\"danBkg display-none\"></div>\r\n"
+"<meta name=viewport content=\"width=device-width, initial-scale=1\">\r\n"
+"<div class=wrapper>\r\n"
+"<div class=tube>\r\n"
+"<div class=\"colored-tube ck1\"></div>\r\n"
+"<div class=bubbles id=b1></div>\r\n"
+"</div>\r\n"
+"<div class=tube>\r\n"
+"<div class=\"colored-tube ck2\"></div>\r\n"
+"<div class=bubbles id=b2></div>\r\n"
+"</div>\r\n"
+"<div class=tube>\r\n"
+"<div class=\"colored-tube ck3\"></div>\r\n"
+"<div class=bubbles id=b3></div>\r\n"
+"</div>\r\n"
+"<div class=tube>\r\n"
+"<div class=\"colored-tube ck4\"></div>\r\n"
+"<div class=bubbles id=b4></div>\r\n"
+"</div>\r\n"
+"<div class=tube>\r\n"
+"<div class=\"colored-tube ck5\"></div>\r\n"
+"<div class=bubbles id=b5></div>\r\n"
+"</div>\r\n"
+"</div>\r\n"
+"<div class=\"danBkg display-none\"></div>\r\n"
+"<h3></h3>\r\n"
+"</body>\r\n"
+"</html>\r\n";
+
+#endif

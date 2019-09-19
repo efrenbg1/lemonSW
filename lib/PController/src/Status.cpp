@@ -7,44 +7,45 @@ char PController::getStatus(void)
 
 void PController::loop(void)
 {
-    if (sample < 10)
+    if (sample < 14)
     {
         samples[sample] = analogRead(A0);
         sample++;
+        http.handleClient();
     }
     else
     {
         sample = 0;
-        callback();
-        int last = 2;
+        callback("");
+        int last = samples[0];
         int changes = 0;
         int on = 0;
         String debug = "";
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 14; i++)
         {
             debug = debug + "/" + (String)samples[i];
-            if (samples[i] > 300)
+            if (samples[i] > 500)
             { //high
                 on++;
-                if (last == 0)
+                if ((samples[i] - last) > 200) //going higher (correcting for capacitance)
                 {
                     changes++;
                 }
-                last = 1;
+                last = samples[i];
             }
             else
             { //low
-                if (last == 1)
+                if ((last - samples[i]) > 200) //going lower (correcting for capacitance)
                 {
                     changes++;
                 }
-                last = 0;
+                last = samples[i];
             }
         }
         //status checker
         if (changes == 0)
         {
-            if (on == 10)
+            if (on == 14)
             {
                 stat = '1';
             }
@@ -55,7 +56,7 @@ void PController::loop(void)
         }
         else if (changes < 2)
         {
-            if (on > 7)
+            if (last == 1)
             {
                 stat = '1';
             }

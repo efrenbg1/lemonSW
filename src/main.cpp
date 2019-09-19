@@ -13,11 +13,10 @@ void setup() {
   pinMode(0, INPUT);
   Serial.begin(9600);
   vault.init(true);
-  //WiFi.setSleepMode(WIFI_MODEM_SLEEP);
+  //Recovery recovery(15, &mqtls, &vault);
   while(!wifi_boot(vault.getSSID(), vault.getWiFipw())){
     Serial.println("Failed to connect to wifi!");
     WiFi.disconnect();
-    Recovery recovery(3, &mqtls, &vault);
   }
   
   //timeClient.begin(); 
