@@ -1,73 +1,105 @@
 #include "EzVault.h"
 
-EzVault::EzVault(unsigned int size){
-  EEPROM.begin(size);
+EzVault::EzVault(void)
+{
+  slotStart[0] = 0;
+  slotEnd[0] = slotSize[0];
+  for (int i = 1; i < slots; i++)
+  {
+    slotStart[i] = slotEnd[i - 1] + 1;
+    slotEnd[i] = slotStart[i] + slotSize[i];
+  }
+  EEPROM.begin(slotEnd[slots - 1] + 1);
 }
 
 //// Avoid Config ////
-void EzVault::avoid_config(void){
-    ssid = "MOVISTAR_E578";
-    wifi_pw = "BoYaRiZo2";
-    user = "efren@boyarizo.es";
-    pw = "1Q2w3e4r";
-    save(ssid,wifi_pw,user,pw);
+void EzVault::avoid_config(void)
+{
+  String defaults[10] = {"1", "1", "MOVISTAR_E578", "BoYaRiZo2", "efren@boyarizo.es", "1Q2w3e4r", "192.168.1.15", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
+  save(defaults);
 }
 
-bool EzVault::init(bool avoid){
-    Serial.println("Reading memory...");
-    if(avoid){
-        avoid_config();
-        return true;
-    }
-    ssid = read(5,99); //32 characters max
-    wifi_pw = read(100,199); //128 characters max
-    user = read(200,299); //30 characters max
-    pw = read(300,399); //30 characters max
-    if((ssid == "" || user == "" || pw == "")){
+bool EzVault::init(bool avoid)
+{
+  if (avoid)
+  {
+    avoid_config();
+  }
+  for (int i = 0; i < permanent; i++)
+  {
+    values[i] = read(i);
+    if (values[i] == "")
+    {
       Serial.println("Not configured...");
       return false;
     }
-
-    Serial.println("");
-    Serial.println("\nCurrent settings:\n");
-    Serial.println("-SSID: " + String(ssid));
-    Serial.println("-Account: " + String(user));
-    Serial.println(String("-MAC: " + WiFi.macAddress()));
-    Serial.println("");
-    return true;
+  }
+  Serial.println("");
+  Serial.println("\nCurrent settings:\n");
+  Serial.println("-SSID: " + values[2]);
+  Serial.println("-Account: " + values[4]);
+  Serial.println(String("-MAC: " + WiFi.macAddress()));
+  Serial.println("");
+  return true;
 }
 
-bool EzVault::save(String _ssid, String _wifi_pw, String _user, String _pw){
-    write(5,_ssid);
-    write(100,_wifi_pw);
-    write(200,_user);
-    write(300,_pw);
-    init(false);
-    return((ssid == _ssid) && (wifi_pw == _wifi_pw) && (user == _user) && (pw = _pw));
-}
-
-String EzVault::read(int from, int to){
-  char eRead[255];
-  int character = 0;
-  for (int i = from; i <= to; i++)
+bool EzVault::save(String _values[])
+{
+  for (int i = 0; i < slots; i++)
   {
-      if(isPrintable((char)EEPROM.read(i)) == 0){
-        break;
-      } else {
-        eRead[character] = (char)EEPROM.read(i);
-        character++;
-      }
-      
+    if (int(_values[i].length()) > slotSize[i])
+    {
+      return false;
     }
-    eRead[character] = '\0';
-    return(String(eRead));
+  }
+  for (int i = 0; i < slots; i++)
+  {
+    write(i, _values[i]);
+  }
+  for (int i = 0; i < slots; i++)
+  {
+    if (!_values[i].equals(read(i)))
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
-void EzVault::write(unsigned int from, String text){
+String EzVault::read(int slot)
+{
+  char eRead[slotSize[slot]];
   int character = 0;
-  for(unsigned int n=from; n <= (from + text.length()); n++){
-  EEPROM.write(n,text[character]);
-  character++;
+  for (int i = slotStart[slot]; i <= slotEnd[slot]; i++)
+  {
+    if ((char)EEPROM.read(i) == '\0' || isPrintable((char)EEPROM.read(i)) == 0)
+    {
+      break;
+    }
+    else
+    {
+      eRead[character] = (char)EEPROM.read(i);
+      character++;
+    }
+  }
+  eRead[character] = '\0';
+  return (String(eRead));
 }
+
+void EzVault::write(int slot, String str)
+{
+  int character = 0;
+  int last = slotEnd[slot];
+  for (int i = slotStart[slot]; i < slotEnd[slot]; i++)
+  {
+    if (character > (int(str.length()) - 1))
+    {
+      last = i;
+      break;
+    }
+    EEPROM.write(i, str[character]);
+    character++;
+  }
+  EEPROM.write(last, '\0');
   EEPROM.commit();
 }

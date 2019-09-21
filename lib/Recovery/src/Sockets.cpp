@@ -1,83 +1,101 @@
 #include "Recovery.h"
 
-String Recovery::scan_wifi(void){
-  String wifi_list = "";
+void Recovery::root(void)
+{
+  timeout = millis();
+  server->send_P(200, "text/html", index_html);
+}
+
+void Recovery::scan(void)
+{
+  timeout = millis();
   int n = WiFi.scanNetworks();
-  if (n == 0) {
-    wifi_list = "None";
-  } else {
-    for (int i = 0; i < n; ++i) {
-      wifi_list += String(WiFi.SSID(i));
-      wifi_list += "/";
-      wifi_list += String(WiFi.RSSI(i));
-      wifi_list += "#";
-      delay(10);
-    }
+  if (n == 0)
+  {
+    server->send(204, "text/plain", "");
   }
-  return wifi_list;
+  else
+  {
+    String list = "{";
+    for (int i = 0; i < n; ++i)
+    {
+      if (list.indexOf("\"" + WiFi.SSID(i) + "\"") == -1)
+      {
+        list += "\"" + String(WiFi.SSID(i)) + "\": ";
+        list += "\"" + String(WiFi.RSSI(i)) + "\", ";
+      }
+      yield();
+    }
+    list.remove(list.length() - 2, 2);
+    list += "}";
+    server->send(200, "application/json", list);
+  }
 }
 
-void Recovery::root(void) {
-    timeout = millis();
-    server->send_P(200, "text/html", index_html);
-}
-
-
-void Recovery::scan(void) {
+void Recovery::test(void)
+{
   timeout = millis();
-  server->send(200, "text/plain", scan_wifi());
-}
-
-
-void Recovery::test(void) {
-  timeout = millis();
-  server->send(200, "text/plain", "OK");
+  server->send(200, "text/plain", "");
   ssid = server->arg("ssid");
-  wifi_pw = server->arg("pass");
+  wifi_pw = server->arg("pw");
   delay(1000);
   WiFi.disconnect();
   WiFi.begin((ssid).c_str(), (wifi_pw).c_str());
 }
 
-void Recovery::check_wifi(void){
+void Recovery::check_wifi(void)
+{
   timeout = millis();
-  delay(200);
-  if (WiFi.status() != WL_CONNECTED){
-    server->send(200, "text/plain", ".");
-  } else {
-    server->send(200, "text/plain", WiFi.SSID());
+  delay(500);
+  if (WiFi.SSID().length() == 0)
+  {
+    server->send(204, "text/plain", ".");
+  }
+  else
+  {
+    if (WiFi.status() != WL_CONNECTED)
+    {
+      server->send(200, "text/plain", ".");
+    }
+    else
+    {
+      server->send(200, "text/plain", WiFi.SSID());
+    }
   }
 }
 
-
-void Recovery::mqtls_check(void){
+void Recovery::mqtls_check(void)
+{
   timeout = millis();
   user = server->arg("user");
   pw = server->arg("pw");
   server->send(200, "text/plain", String(mqtls->connect("rmote.app", 2443, user, pw)));
 }
 
-void Recovery::save(void){
+void Recovery::save(void)
+{
   timeout = millis();
-  if(WiFi.status() == WL_CONNECTED && wifi_pw.length() < 64 && ssid.length() < 33 && user.length() < 31 && pw.length() < 27) {
-     if(vault->save(ssid, wifi_pw, user, pw)){
-     server->send(200, "text/plain", "OK");
-     } else {
-       server->send(200, "text/plain", "Error");
-     }
-  } else {
-    server->send(200, "text/plain", "Error");
+  String values[] = {server->arg("local"), server->arg("static"), ssid, wifi_pw, user, pw, server->arg("ip"), server->arg("gateway"), server->arg("netmask"), server->arg("dns")};
+  if (vault->save(values))
+  {
+    server->send(200, "text/plain", "");
   }
+  else
+  {
+    server->send(403, "text/plain", "");
   }
+}
 
-void Recovery::reboot(void){
-server->send_P(200, "text/html", reboot_html);
-delay(5000);
-Serial.println("Rebooting...");
+void Recovery::reboot(void)
+{
+  server->send_P(200, "text/html", reboot_html);
+  delay(5000);
+  Serial.println("Rebooting...");
   ESP.restart();
 }
 
-void Recovery::off_wifi(void){
+void Recovery::off_wifi(void)
+{
   timeout = millis();
   WiFi.disconnect();
 }

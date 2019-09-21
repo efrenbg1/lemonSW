@@ -31,9 +31,9 @@ class PController {
         void indexHTTP(void);
         void actionHTTP(void);
         void statusHTTP(void);
+        void initHTTP(void);
     private:
         void callback(String);
-        void initHTTP(void);
 };
 
 #endif

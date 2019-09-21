@@ -520,10 +520,14 @@
         }
     }
 
-    function req(url, callback) {
+    function req(url, callback, type) {
         let r = new XMLHttpRequest();
         r.open('GET', url, true);
-        r.responseType = 'text';
+        if (type !== undefined) {
+            r.responseType = type;
+        } else {
+            r.responseType = 'text';
+        }
         r.onreadystatechange = function () {
             if (r.readyState == 4) {
                 callback(r.status, r.response);
@@ -539,28 +543,25 @@
         }
     }
 
-    var step = 3;
+    var step = 1;
     var timeout = 0;
     hideall();
-    //scan();
-    //check();
-    progress();
+    scan();
+    check();
+    //progress();
 
     function scan() {
         show("scanning");
         req('http://192.168.1.1/scan', function (status, response) {
-            if (status === 200) {
+            if (status === 200 || status === 204) {
                 var x = document.getElementById("ssidWifi");
-                if (response !== "None") {
-                    var ssid = (response).split('#');
-                    var i = 0;
-                    while (i < ssid.length && ssid[i] !== "") {
-                        var data = ssid[i].split('/');
+                if (status === 200) {
+                    var ssid = Object.keys(response);
+                    for (var i = 0; i < ssid.length; i++) {
                         var option = document.createElement("option");
-                        option.text = data[0] + ' (Signal: ' + data[1] + ')';
-                        option.id = data[0];
+                        option.text = ssid[i] + ' (Signal: ' + response[ssid[i]] + ')';
+                        option.id = ssid[i];
                         x.add(option);
-                        i = i + 1;
                     }
                 }
                 var option = document.createElement("option");
@@ -574,8 +575,9 @@
             } else {
                 hideall();
                 show("error");
+                return;
             }
-        });
+        }, 'json');
     }
 
     function custom() {
@@ -594,9 +596,9 @@
         var pw = document.getElementById('pwWifi');
         var custom = document.getElementById('customWifi');
         if (ssid.options[ssid.selectedIndex].id !== "") {
-            var url = 'http://192.168.1.1/test?ssid=' + ssid.options[ssid.selectedIndex].id + '&pass=' + pw.value;
+            var url = 'http://192.168.1.1/test?ssid=' + ssid.options[ssid.selectedIndex].id + '&pw=' + pw.value;
         } else {
-            var url = 'http://192.168.1.1/test?ssid=' + custom.value + '&pass=' + pw.value;
+            var url = 'http://192.168.1.1/test?ssid=' + custom.value + '&pw=' + pw.value;
         }
         req(url, function (status, response) {
             if (status === 200) {
@@ -625,7 +627,7 @@
                     show("connected");
                     show("next");
                 }
-            } else {
+            } else if (status !== 204) {
                 alert("Reconnect to the WiFi before continuing...");
                 check();
             }
@@ -672,7 +674,8 @@
             if (status === 200) {
                 hide("connectingMq");
                 show("mq");
-                show("back");
+                show("back"); 
+                show("skip");
                 var s = Number(response);
                 if (s === 9) {
                     alert("Wrong user or password");
@@ -696,8 +699,10 @@
 
     function save() {
         var static = document.getElementById("static").checked;
-        var url = 'http://192.168.1.1/save?static=' + static
+        var local = document.getElementById("local").checked;
+        var url = 'http://192.168.1.1/save';
         if (static) {
+            url = url + '?static=1';
             var ip = document.getElementById("ip").value;
             var gateway = document.getElementById("gateway").value;
             var netmask = document.getElementById("netmask").value;
@@ -711,18 +716,21 @@
             url = url + '&gateway=' + gateway;
             url = url + '&netmask=' + netmask;
             url = url + '&dns=' + dns;
+        } else {
+            url = url + '?static=0&ip=&gateway=&netmask=&dns=';
         }
-        url = url + '&local=' + document.getElementById("local").checked;
-        console.log(url);
-        /*req()
-        var client = new HttpClient();
-        client.get('http://192.168.1.1/save', function (response) {
-            if (response === "OK") {
+        if(local){
+            url = url + '&local=1'; 
+        } else {
+            url = url + '&local=0';
+        }
+        req(url, function (status, response) {
+            if (status === 200) {
                 window.location.replace("http://192.168.1.1/reboot");
             } else {
                 alert("Something went wrong");
             }
-        });*/
+        });
     }
 </script>
 <script>

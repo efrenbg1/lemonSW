@@ -30,8 +30,6 @@ class Recovery {
         void save(void);
         void reboot(void);
         void off_wifi(void);
-    private:
-        String scan_wifi(void);
 };
 
 #endif
