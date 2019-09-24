@@ -61,6 +61,13 @@ void PController::callback(String msg)
     {
         force();
     }
+    else if (msg.equals("7"))
+    {
+        mqtls->lastwill(topic, "0", "7");
+        mqtls->publish(topic, "1", "6");
+        http.stop();
+        GitUpdate update;
+    }
     else if (msg.equals("9"))
     {
         mqtls->lastwill(topic, "0", "8");

@@ -6,7 +6,7 @@
 #include <MqTLS.h>
 #include <EzVault.h>
 #include <Recovery.h>
-#include <ESP8266WiFi.h>
+#include <GitUpdate.h>
 
 class PController {
         bool action_off = false, action_on = false, action_force = false;

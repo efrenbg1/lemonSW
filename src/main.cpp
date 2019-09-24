@@ -1,4 +1,6 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 #include <WiFiUdp.h>
 #include <Arduino.h>
 #include <EzVault.h>
@@ -14,6 +16,7 @@
 #define jumper 16
 
 #define fingerprint "42 DC 8A 31 86 ED B5 31 D1 CF 87 21 96 CD 8A E7 A7 32 99 FE"
+
 #define server_ip "rmote.app"
 #define server_port 2443
 
@@ -75,7 +78,6 @@ bool wifi_boot()
   Serial.println(WiFi.localIP());
   return true;
 }
-
 //WiFiUDP udp;
 //NTPClient timeClient(udp, "time.google.com",0,6000);
 
@@ -84,7 +86,7 @@ void setup()
   pinMode(LED, OUTPUT);
   pinMode(0, INPUT);
   Serial.begin(9600);
-  vault.init(false);
+  vault.init(true);
   // JUMPER recovery
   pinMode(jumper, INPUT_PULLDOWN_16);
   if(digitalRead(jumper) == 1){
@@ -99,6 +101,7 @@ void setup()
     Serial.println("Failed to connect to wifi!");
     WiFi.disconnect();
   }
+
   pc.initHTTP();
   //timeClient.begin();
 }
