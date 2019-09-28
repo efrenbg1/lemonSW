@@ -24,7 +24,6 @@ MqTLS mqtls(fingerprint);
 EzVault vault;
 PController pc(PowerSW, server_ip, &mqtls, &vault);
 
-
 const char *wl_status_to_string(wl_status_t status)
 {
   switch (status)
@@ -89,7 +88,8 @@ void setup()
   vault.init(true);
   // JUMPER recovery
   pinMode(jumper, INPUT_PULLDOWN_16);
-  if(digitalRead(jumper) == 1){
+  if (digitalRead(jumper) == 1)
+  {
     Recovery recovery(15, &mqtls, &vault);
   }
   pinMode(jumper, OUTPUT);
@@ -102,7 +102,10 @@ void setup()
     WiFi.disconnect();
   }
 
-  pc.initHTTP();
+  if (vault.getLocal())
+  {
+    pc.initHTTP();
+  }
   //timeClient.begin();
 }
 

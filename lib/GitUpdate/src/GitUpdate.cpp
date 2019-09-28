@@ -1,7 +1,10 @@
 #include "GitUpdate.h"
 
+#define LED 2
+
 GitUpdate::GitUpdate(void)
 {
+    digitalWrite(LED, LOW);
     WiFiClient client;
 
     ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
@@ -25,4 +28,5 @@ GitUpdate::GitUpdate(void)
         Serial.println("HTTP_UPDATE_OK");
         break;
     }
+    ESP.restart();
 }

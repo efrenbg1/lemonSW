@@ -2,7 +2,7 @@
 
 void PController::callback(String msg)
 {
-    if (msg.equals(""))
+    if (msg.equals("") && !vault->getLocal())
     {
         int status = mqtls->retrieve(topic, "1", &msg);
         if (status == -1)
@@ -41,7 +41,7 @@ void PController::callback(String msg)
     Serial.println(msg);
     if (msg.equals("0"))
     {
-        mqtls->publish(topic, "1", "4");
+        action = '4';
         switch (getStatus())
         {
         case '0':
@@ -54,25 +54,40 @@ void PController::callback(String msg)
             on();
             break;
         default:
-            mqtls->publish(topic, "1", "5");
+            action = '5';
         }
+        if(!vault->getLocal()) mqtls->publish(topic, "1", String(action));
     }
     else if (msg.equals("1"))
     {
+        action = '4';
+        if(!vault->getLocal()) mqtls->publish(topic,"1", String(action));
         force();
     }
-    else if (msg.equals("7"))
+    else if (msg.equals("8"))
     {
-        mqtls->lastwill(topic, "0", "7");
-        mqtls->publish(topic, "1", "6");
-        http.stop();
+        if (vault->getLocal())
+        {
+            http.stop();
+        }
+        else
+        {
+            mqtls->lastwill(topic, "0", "7");
+            mqtls->publish(topic, "1", "6");
+        }
         GitUpdate update;
     }
     else if (msg.equals("9"))
     {
-        mqtls->lastwill(topic, "0", "8");
-        mqtls->publish(topic, "1", "6");
-        http.stop();
+        if (vault->getLocal())
+        {
+            http.stop();
+        }
+        else
+        {
+            mqtls->lastwill(topic, "0", "8");
+            mqtls->publish(topic, "1", "6");
+        }
         delay(5000);
         Recovery recovery(5, mqtls, vault);
     }

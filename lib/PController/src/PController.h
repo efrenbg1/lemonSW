@@ -15,6 +15,7 @@ class PController {
         unsigned int timeout = 0;
         int samples[14] = {0};
         char stat = '0';
+        char action = '6';
         String topic = WiFi.macAddress();
         String address = "";
         int failed = 0;

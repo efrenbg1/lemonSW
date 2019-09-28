@@ -103,7 +103,7 @@ String file1=
 "<form>\r\n"
 "<ul class=\"flex-outer container\">\r\n"
 "<li>\r\n"
-"<label>Enable local dashboard:</label>\r\n"
+"<label>Enable local dashboard (disables server connection):</label>\r\n"
 "<label class=custom-box style=max-width:25px>\r\n"
 "<input type=checkbox id=local>\r\n"
 "<span class=checkmark></span>\r\n"

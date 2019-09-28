@@ -11,12 +11,12 @@ void PController::loop(void)
     {
         samples[sample] = analogRead(A0);
         sample++;
-        http.handleClient();
+        if(vault->getLocal()) http.handleClient();
     }
     else
     {
         sample = 0;
-        callback("");
+        if(!vault->getLocal()) callback("");
         int last = samples[0];
         int changes = 0;
         int on = 0;
@@ -34,7 +34,7 @@ void PController::loop(void)
                 last = samples[i];
             }
             else
-            { //low
+            {                                  //low
                 if ((last - samples[i]) > 200) //going lower (correcting for capacitance)
                 {
                     changes++;
@@ -70,25 +70,13 @@ void PController::loop(void)
             stat = '2';
         }
 
-        mqtls->publish(topic, "0", String(stat));
-
-        //For debugging purposes only
-        debug = debug + "|" + changes + "|" + on;
-        Serial.println(debug);
-        mqtls->publish(topic, "2", debug);
+        char oldAction = action;
 
         //actions cheker
         if (action_force == true)
         {
             action_force = false;
-            if (stat == '0')
-            {
-                mqtls->publish(topic, "1", "6");
-            }
-            else
-            {
-                mqtls->publish(topic, "1", "5");
-            }
+            (stat == '0') ? action = '6' : action = '5';
         }
 
         if (action_off == true)
@@ -97,12 +85,12 @@ void PController::loop(void)
             if (stat == '0' || stat == '2')
             {
                 action_off = false;
-                mqtls->publish(topic, "1", "6");
+                action = '6';
             }
             else if (timeout > 20)
             {
                 action_off = false;
-                mqtls->publish(topic, "1", "5");
+                action = '5';
             }
         }
 
@@ -112,12 +100,26 @@ void PController::loop(void)
             if (stat == '1')
             {
                 action_on = false;
-                mqtls->publish(topic, "1", "6");
+                action = '6';
             }
             else if (timeout > 2)
             {
                 action_on = false;
-                mqtls->publish(topic, "1", "5");
+                action = '5';
+            }
+        }
+
+        if (!vault->getLocal())
+        {
+            mqtls->publish(topic, "0", String(stat));
+
+            //For debugging purposes only
+            debug = debug + "|" + changes + "|" + on;
+            Serial.println(debug);
+            mqtls->publish(topic, "2", debug);
+
+            if(oldAction != action){
+                mqtls->publish(topic, "1", String(action));
             }
         }
     }
