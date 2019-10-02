@@ -20,12 +20,12 @@ PC is:
 <button class=b2 type=button onclick=update()>Update</button>
 </div>
 </body>
-<script>var actionHTML=document.getElementById("action");var statusHTML=document.getElementById("status");function power(){actionHTML.innerText="Waiting for response...";req('/action?payload=0',function(status,response){if(status!==200){actionHTML.innerText="Failed to communicate!"}else{actionHTML.innerText="Turning off..."}});}
+<script>var actionHTML=document.getElementById("action");var statusHTML=document.getElementById("status");function power(){actionHTML.innerText="Waiting for response...";req('/action?payload=0',function(status,response){if(status!==200){actionHTML.innerText="Failed to communicate!"}else{actionHTML.innerText="Turning on/off..."}});}
 function force(){if(confirm("Are your sure? This will cut power to the PC losing any unsaved files")){actionHTML.innerText="Waiting for response...";req('/action?payload=1',function(status,response){if(status!==200){actionHTML.innerText="Failed to communicate!"}});}}
-window.setInterval(refresh,1000);function refresh(){req('/status',function(status,response){if(status===200){var stats={'0':'OFF','1':'ON','2':'SUSPENDED'};var actions={'0':'Working on it...','1':'Turning off...','4':'Turning off...','5':'Command failed!','6':'Waiting for command'};statusHTML.innerHTML=stats[response['status']];actionHTML.innerHTML=actions[response['action']];}});}
+window.setInterval(refresh,1000);function refresh(){req('/status',function(status,response){if(status===200){var stats={'0':'OFF','1':'ON','2':'SUSPENDED'};var actions={'0':'Working on it...','1':'Turning on/off...','4':'Turning on/off...','5':'Command failed!','6':'Waiting for command'};statusHTML.innerHTML=stats[response['status']];actionHTML.innerHTML=actions[response['action']];}});}
 function update(){if(confirm("Are your sure? The board needs an active Internet connection and uninterrupted power")){actionHTML.innerText="Waiting for response...";req('/action?payload=8',function(status,response){if(status!==200){actionHTML.innerText="Failed to communicate!"}else{actionHTML.innerText="Board is updating";}});}}
 function recovery(){if(confirm("Are your sure? Recovery creates a HotSpot to change the settings")){actionHTML.innerText="Waiting for response...";req('/action?payload=9',function(status,response){if(status!==200){actionHTML.innerText="Failed to communicate!"}else{actionHTML.innerText="Board is in recovery";}});}}
 function show(object){object.style.display='inline';object.style.visibility='visible';}
 function hide(object){object.style.display='none';}
-var ip="http://192.168.1.15";function req(url,callback){let r=new XMLHttpRequest();r.open('GET',ip+url,true);r.responseType='json';r.onreadystatechange=function(){if(r.readyState==4){callback(r.status,r.response);}}.bind(this);r.send();}</script>
+var ip="";function req(url,callback){let r=new XMLHttpRequest();r.open('GET',ip+url,true);r.responseType='json';r.onreadystatechange=function(){if(r.readyState==4){callback(r.status,r.response);}}.bind(this);r.send();}</script>
 </html>

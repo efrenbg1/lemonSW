@@ -12,7 +12,7 @@ bool EzVault::getStatic()
     {
         for (int i = 0; i < 4; i++)
         {
-            if (!staticIP[i].fromString(read(permanent + i)))
+            if (!staticIP[i].fromString(read(6 + i)))
             {
                 Serial.println("\nStatic IP not properly configured!!!\n");
                 return false;

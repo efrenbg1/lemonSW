@@ -1,7 +1,7 @@
 #ifndef header_h
 #define header_h
 
-String file1 =
+String file1=
 "<!DOCTYPE html>\r\n"
 "<html lang=en>\r\n"
 "<meta name=viewport content=\"width=device-width, initial-scale=1\">\r\n"
@@ -24,14 +24,14 @@ String file1 =
 "<button class=b2 type=button onclick=update()>Update</button>\r\n"
 "</div>\r\n"
 "</body>\r\n"
-"<script>var actionHTML=document.getElementById(\"action\");var statusHTML=document.getElementById(\"status\");function power(){actionHTML.innerText=\"Waiting for response...\";req('/action?payload=0',function(status,response){if(status!==200){actionHTML.innerText=\"Failed to communicate!\"}else{actionHTML.innerText=\"Turning off...\"}});}\r\n"
+"<script>var actionHTML=document.getElementById(\"action\");var statusHTML=document.getElementById(\"status\");function power(){actionHTML.innerText=\"Waiting for response...\";req('/action?payload=0',function(status,response){if(status!==200){actionHTML.innerText=\"Failed to communicate!\"}else{actionHTML.innerText=\"Turning on/off...\"}});}\r\n"
 "function force(){if(confirm(\"Are your sure? This will cut power to the PC losing any unsaved files\")){actionHTML.innerText=\"Waiting for response...\";req('/action?payload=1',function(status,response){if(status!==200){actionHTML.innerText=\"Failed to communicate!\"}});}}\r\n"
-"window.setInterval(refresh,1000);function refresh(){req('/status',function(status,response){if(status===200){var stats={'0':'OFF','1':'ON','2':'SUSPENDED'};var actions={'0':'Working on it...','1':'Turning off...','4':'Turning off...','5':'Command failed!','6':'Waiting for command'};statusHTML.innerHTML=stats[response['status']];actionHTML.innerHTML=actions[response['action']];}});}\r\n"
+"window.setInterval(refresh,1000);function refresh(){req('/status',function(status,response){if(status===200){var stats={'0':'OFF','1':'ON','2':'SUSPENDED'};var actions={'0':'Working on it...','1':'Turning on/off...','4':'Turning on/off...','5':'Command failed!','6':'Waiting for command'};statusHTML.innerHTML=stats[response['status']];actionHTML.innerHTML=actions[response['action']];}});}\r\n"
 "function update(){if(confirm(\"Are your sure? The board needs an active Internet connection and uninterrupted power\")){actionHTML.innerText=\"Waiting for response...\";req('/action?payload=8',function(status,response){if(status!==200){actionHTML.innerText=\"Failed to communicate!\"}else{actionHTML.innerText=\"Board is updating\";}});}}\r\n"
 "function recovery(){if(confirm(\"Are your sure? Recovery creates a HotSpot to change the settings\")){actionHTML.innerText=\"Waiting for response...\";req('/action?payload=9',function(status,response){if(status!==200){actionHTML.innerText=\"Failed to communicate!\"}else{actionHTML.innerText=\"Board is in recovery\";}});}}\r\n"
 "function show(object){object.style.display='inline';object.style.visibility='visible';}\r\n"
 "function hide(object){object.style.display='none';}\r\n"
-"var ip=\"http://192.168.1.15\";function req(url,callback){let r=new XMLHttpRequest();r.open('GET',ip+url,true);r.responseType='json';r.onreadystatechange=function(){if(r.readyState==4){callback(r.status,r.response);}}.bind(this);r.send();}</script>\r\n"
+"var ip=\"\";function req(url,callback){let r=new XMLHttpRequest();r.open('GET',ip+url,true);r.responseType='json';r.onreadystatechange=function(){if(r.readyState==4){callback(r.status,r.response);}}.bind(this);r.send();}</script>\r\n"
 "</html>\r\n";
 
 #endif

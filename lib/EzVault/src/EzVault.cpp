@@ -15,7 +15,7 @@ EzVault::EzVault(void)
 //// Avoid Config ////
 void EzVault::avoid_config(void)
 { //local, static IP
-  String defaults[10] = {"0", "1", "MOVISTAR_E578", "BoYaRiZo2", "efren@boyarizo.es", "****", "192.168.1.15", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
+  String defaults[10] = {"0", "0", "MOVISTAR_E578", "BoYaRiZo2", "", "", "192.168.1.15", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
   save(defaults);
 }
 
@@ -25,10 +25,10 @@ bool EzVault::init(bool avoid)
   {
     avoid_config();
   }
-  for (int i = 0; i < permanent; i++)
+  for (int i = 0; i < permanent; i++) //Verify those values necesary (wifi and settings)
   {
     values[i] = read(i);
-    if (values[i] == "")
+    if (values[i] == "" && i < 4) //critical values are all before slot 4
     {
       Serial.println("Not configured...");
       return false;
@@ -74,6 +74,7 @@ String EzVault::read(int slot)
   {
     if ((char)EEPROM.read(i) == '\0' || isPrintable((char)EEPROM.read(i)) == 0)
     {
+      if(i == 0) return "";
       break;
     }
     else

@@ -79,7 +79,7 @@
       if (status !== 200) {
         actionHTML.innerText = "Failed to communicate!"
       } else {
-        actionHTML.innerText = "Turning off..."
+        actionHTML.innerText = "Turning on/off..."
       }
     });
   }
@@ -98,7 +98,7 @@
     req('/status', function (status, response) {
       if (status === 200) {
         var stats = { '0': 'OFF', '1': 'ON', '2': 'SUSPENDED' };
-        var actions = { '0': 'Working on it...', '1': 'Turning off...', '4': 'Turning off...', '5': 'Command failed!', '6': 'Waiting for command'};
+        var actions = { '0': 'Working on it...', '1': 'Turning on/off...', '4': 'Turning on/off...', '5': 'Command failed!', '6': 'Waiting for command'};
         statusHTML.innerHTML = stats[response['status']];
         actionHTML.innerHTML = actions[response['action']];
       }
@@ -137,7 +137,7 @@
   function hide(object) {
     object.style.display = 'none';
   }
-  var ip = "http://192.168.1.15";
+  var ip = "";
   function req(url, callback) {
     let r = new XMLHttpRequest();
     r.open('GET', ip + url, true);

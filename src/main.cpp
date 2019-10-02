@@ -20,6 +20,8 @@
 #define server_ip "rmote.app"
 #define server_port 2443
 
+#define avoid_settings false
+
 MqTLS mqtls(fingerprint);
 EzVault vault;
 PController pc(PowerSW, server_ip, &mqtls, &vault);
@@ -85,7 +87,6 @@ void setup()
   pinMode(LED, OUTPUT);
   pinMode(0, INPUT);
   Serial.begin(9600);
-  vault.init(true);
   // JUMPER recovery
   pinMode(jumper, INPUT_PULLDOWN_16);
   if (digitalRead(jumper) == 1)
@@ -94,7 +95,8 @@ void setup()
   }
   pinMode(jumper, OUTPUT);
 
-  //Recovery recovery(15, &mqtls, &vault);
+  
+  if(!vault.init(avoid_settings)) Recovery recovery(15, &mqtls, &vault);
 
   while (!wifi_boot())
   {
