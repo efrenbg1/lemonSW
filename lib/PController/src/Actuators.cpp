@@ -5,7 +5,6 @@ PController::PController(unsigned int _GPIO, String _server, MqTLS* _mqtls, EzVa
     mqtls = _mqtls;
     vault = _vault;
     address = _server;
-    //initHTTP();
 }
 
 void PController::on(void){

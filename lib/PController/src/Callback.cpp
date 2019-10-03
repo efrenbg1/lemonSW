@@ -24,7 +24,7 @@ void PController::callback(String msg)
                 if (failed > 15)
                 {
                     failed = 0;
-                    http.stop();
+                    stopHTTP();
                     Recovery recovery(2, mqtls, vault);
                 }
             }
@@ -68,7 +68,7 @@ void PController::callback(String msg)
     {
         if (vault->getLocal())
         {
-            http.stop();
+            stopHTTP();
         }
         else
         {
@@ -81,7 +81,7 @@ void PController::callback(String msg)
     {
         if (vault->getLocal())
         {
-            http.stop();
+            stopHTTP();
         }
         else
         {

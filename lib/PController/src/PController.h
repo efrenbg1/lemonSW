@@ -33,6 +33,7 @@ class PController {
         void actionHTTP(void);
         void statusHTTP(void);
         void initHTTP(void);
+        void stopHTTP(void);
     private:
         void callback(String);
 };

@@ -40,6 +40,11 @@ void PController::initHTTP(void)
     http.begin();
 }
 
+void PController::stopHTTP(void)
+{
+    http.stop();
+}
+
 
 void PController::indexHTTP(void)
 {

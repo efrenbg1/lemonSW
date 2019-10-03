@@ -50,6 +50,7 @@ const char *wl_status_to_string(wl_status_t status)
 }
 bool wifi_boot()
 {
+  if (vault.getLocal()) pc.stopHTTP();
   WiFi.mode(WIFI_STA);
   WiFi.begin(vault.getSSID(), vault.getWiFipw());
   if (vault.getStatic())
@@ -77,6 +78,7 @@ bool wifi_boot()
   Serial.println("Connected.");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  if (vault.getLocal()) pc.initHTTP();
   return true;
 }
 //WiFiUDP udp;
@@ -87,6 +89,7 @@ void setup()
   pinMode(LED, OUTPUT);
   pinMode(0, INPUT);
   Serial.begin(9600);
+
   // JUMPER recovery
   pinMode(jumper, INPUT_PULLDOWN_16);
   if (digitalRead(jumper) == 1)
@@ -104,10 +107,6 @@ void setup()
     WiFi.disconnect();
   }
 
-  if (vault.getLocal())
-  {
-    pc.initHTTP();
-  }
   //timeClient.begin();
 }
 
