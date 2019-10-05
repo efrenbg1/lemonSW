@@ -4,6 +4,13 @@
 
 <head>
   <title>lemonSW minDashboard</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="https://rmote.app/icon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://rmote.app/icon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://rmote.app/icon/favicon-16x16.png">
+  <link rel="manifest" href="https://rmote.app/icon/site.webmanifest">
+  <link rel="mask-icon" href="https://rmote.app/icon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="theme-color" content="#ffffff">
   <style>
     h1 {
       text-shadow: 2px 1.5px red;
@@ -58,9 +65,9 @@
 <body>
   <center clas="sub">
     PC is:
-  <h1 id="status" style="margin-bottom: 4rem;">Loading...</h1>
-  <h2 id="action" style="margin-bottom: 4rem;">Loading...</h2>
-</center>
+    <h1 id="status" style="margin-bottom: 4rem;">Loading...</h1>
+    <h2 id="action" style="margin-bottom: 4rem;">Loading...</h2>
+  </center>
   <div style="float: center; text-align: center; margin-bottom: 4rem;">
     <button class="b1" type="button" onclick='power()'>POWER</button>
   </div>
@@ -98,7 +105,7 @@
     req('/status', function (status, response) {
       if (status === 200) {
         var stats = { '0': 'OFF', '1': 'ON', '2': 'SUSPENDED' };
-        var actions = { '0': 'Working on it...', '1': 'Turning on/off...', '4': 'Turning on/off...', '5': 'Command failed!', '6': 'Waiting for command'};
+        var actions = { '0': 'Working on it...', '1': 'Turning on/off...', '4': 'Turning on/off...', '5': 'Command failed!', '6': 'Waiting for command' };
         statusHTML.innerHTML = stats[response['status']];
         actionHTML.innerHTML = actions[response['action']];
       }
@@ -150,5 +157,4 @@
     r.send();
   }
 </script>
-
 </html>

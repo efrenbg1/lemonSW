@@ -5,6 +5,13 @@ const char status_html[] PROGMEM = "<!DOCTYPE html>\r\n"
 "<meta name=viewport content=\"width=device-width, initial-scale=1\">\r\n"
 "<head>\r\n"
 "<title>lemonSW minDashboard</title>\r\n"
+"<link rel=apple-touch-icon sizes=180x180 href=https://rmote.app/icon/apple-touch-icon.png>\r\n"
+"<link rel=icon type=image/png sizes=32x32 href=https://rmote.app/icon/favicon-32x32.png>\r\n"
+"<link rel=icon type=image/png sizes=16x16 href=https://rmote.app/icon/favicon-16x16.png>\r\n"
+"<link rel=manifest href=https://rmote.app/icon/site.webmanifest>\r\n"
+"<link rel=mask-icon href=https://rmote.app/icon/safari-pinned-tab.svg color=#5bbad5>\r\n"
+"<meta name=msapplication-TileColor content=#ffc40d>\r\n"
+"<meta name=theme-color content=#ffffff>\r\n"
 "<style>h1{text-shadow:2px 1.5px red;font-family:\"Georgia\",Times,serif;padding-bottom:25px;margin-top:.2rem;text-align:center}h2{font-family:\"Georgia\",Times,serif;margin:5%;text-align:center}body{background-color:#2b3e4c;color:#fff;padding-left:0;padding-top:100px}.b1{margin-left:auto;padding:8px 16px;border:0;background:red;color:#f2f2f2;text-transform:uppercase;letter-spacing:.09em;border-radius:2px}.b2{margin-left:auto;padding:8px 16px;border:0;background:#00bcd4;color:#f2f2f2;text-transform:uppercase;letter-spacing:.09em;border-radius:2px}.sub{font-size:5px;text-align:center}</style>\r\n"
 "</head>\r\n"
 "<body>\r\n"
@@ -44,7 +51,6 @@ void PController::stopHTTP(void)
 {
     http.stop();
 }
-
 
 void PController::indexHTTP(void)
 {
