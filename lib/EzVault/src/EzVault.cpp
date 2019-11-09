@@ -15,7 +15,7 @@ EzVault::EzVault(void)
 //// Avoid Config ////
 void EzVault::avoid_config(void)
 { //local, static IP
-  String defaults[10] = {"1", "1", "MOVISTAR_E578", "BoYaRiZo2", "", "", "192.168.1.60", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
+  String defaults[10] = {"0", "0", "Mi_527", "", "", "", "192.168.1.60", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
   save(defaults);
 }
 

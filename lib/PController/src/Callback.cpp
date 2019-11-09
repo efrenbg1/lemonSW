@@ -13,7 +13,7 @@ void PController::callback(String msg)
             {
                 mqtls->lastwill(topic, "0", "9");
                 mqtls->publish(topic, "1", "6");
-                mqtls->publish(topic, "3", WiFi.localIP().toString());
+                mqtls->publish(topic, "2", "3"); //version running
                 Serial.println("Done");
                 failed = 0;
             }

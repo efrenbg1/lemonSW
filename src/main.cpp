@@ -26,28 +26,6 @@ MqTLS mqtls(fingerprint);
 EzVault vault;
 PController pc(PowerSW, server_ip, &mqtls, &vault);
 
-const char *wl_status_to_string(wl_status_t status)
-{
-  switch (status)
-  {
-  case WL_NO_SHIELD:
-    return "WL_NO_SHIELD";
-  case WL_IDLE_STATUS:
-    return "WL_IDLE_STATUS";
-  case WL_NO_SSID_AVAIL:
-    return "WL_NO_SSID_AVAIL";
-  case WL_SCAN_COMPLETED:
-    return "WL_SCAN_COMPLETED";
-  case WL_CONNECTED:
-    return "WL_CONNECTED";
-  case WL_CONNECT_FAILED:
-    return "WL_CONNECT_FAILED";
-  case WL_CONNECTION_LOST:
-    return "WL_CONNECTION_LOST";
-  case WL_DISCONNECTED:
-    return "WL_DISCONNECTED";
-  }
-}
 bool wifi_boot()
 {
   if (vault.getLocal()) pc.stopHTTP();
@@ -101,10 +79,12 @@ void setup()
   
   if(!vault.init(avoid_settings)) Recovery recovery(15, &mqtls, &vault);
 
-  while (!wifi_boot())
+  if (!wifi_boot())
   {
     Serial.println("Failed to connect to wifi!");
     WiFi.disconnect();
+    Recovery recovery(2, &mqtls, &vault);
+    ESP.restart();
   }
 
   //timeClient.begin();
@@ -116,9 +96,8 @@ void loop()
   /*timeClient.update();
   Serial.println(timeClient.getFormattedTime());*/
   pc.loop();
-  if (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED)
   {
-    Serial.println(wl_status_to_string(WiFi.status()));
     wifi_boot();
   }
 }

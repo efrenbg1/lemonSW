@@ -20,10 +20,10 @@ void PController::loop(void)
         int last = samples[0];
         int changes = 0;
         int on = 0;
-        String debug = "";
+        //String debug = "";
         for (int i = 0; i < 14; i++)
         {
-            debug = debug + "/" + (String)samples[i];
+            //debug = debug + "/" + (String)samples[i];
             if (samples[i] > 500)
             { //high
                 on++;
@@ -114,9 +114,9 @@ void PController::loop(void)
             mqtls->publish(topic, "0", String(stat));
 
             //For debugging purposes only
-            debug = debug + "|" + changes + "|" + on;
-            Serial.println(debug);
-            mqtls->publish(topic, "2", debug);
+            //debug = debug + "|" + changes + "|" + on;
+            //Serial.println(debug);
+            //mqtls->publish(topic, "2", debug);
 
             if(oldAction != action){
                 mqtls->publish(topic, "1", String(action));
