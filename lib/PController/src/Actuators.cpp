@@ -37,7 +37,7 @@ void PController::off(void){
 void PController::force(void){
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
-    delay(8000);
+    delay(6000);
     digitalWrite(GPIO,LOW);
     pinMode(GPIO,INPUT);
     action_force = true;

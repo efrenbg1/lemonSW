@@ -7,7 +7,7 @@ char PController::getStatus(void)
 
 void PController::loop(void)
 {
-    if (sample < 14)
+    if (sample < 15)
     {
         samples[sample] = analogRead(A0);
         sample++;
@@ -21,7 +21,7 @@ void PController::loop(void)
         int changes = 0;
         int on = 0;
         //String debug = "";
-        for (int i = 0; i < 14; i++)
+        for (int i = 0; i < 15; i++)
         {
             //debug = debug + "/" + (String)samples[i];
             if (samples[i] > 500)
@@ -45,7 +45,7 @@ void PController::loop(void)
         //status checker
         if (changes == 0)
         {
-            if (on == 14)
+            if (on == 15)
             {
                 stat = '1';
             }

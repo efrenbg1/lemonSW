@@ -28,76 +28,88 @@ PController pc(PowerSW, server_ip, &mqtls, &vault);
 
 bool wifi_boot()
 {
-  if (vault.getLocal()) pc.stopHTTP();
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(vault.getSSID(), vault.getWiFipw());
-  if (vault.getStatic())
-  {
-    WiFi.config(vault.getIP(), vault.getGateway(), vault.getNetmask(), vault.getDNS());
-  }
-  digitalWrite(LED, LOW);
-  Serial.print("Connecting to wifi...");
-  int timeout = 0;
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    timeout++;
-    yield();
-    if (timeout > 45)
+    if (vault.getLocal())
+        pc.stopHTTP();
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(vault.getSSID(), vault.getWiFipw());
+    if (vault.getStatic())
     {
-      return false;
+        WiFi.config(vault.getIP(), vault.getGateway(), vault.getNetmask(), vault.getDNS());
     }
-    delay(250);
-    digitalWrite(LED, HIGH);
-    Serial.print(".");
-    delay(250);
     digitalWrite(LED, LOW);
-  }
-  digitalWrite(LED, HIGH);
-  Serial.println("Connected.");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-  if (vault.getLocal()) pc.initHTTP();
-  return true;
+    Serial.print("Connecting to wifi...");
+    int timeout = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        timeout++;
+        yield();
+        if (timeout > 45)
+        {
+            return false;
+        }
+        delay(250);
+        digitalWrite(LED, HIGH);
+        Serial.print(".");
+        delay(250);
+        digitalWrite(LED, LOW);
+    }
+    digitalWrite(LED, HIGH);
+    Serial.println("Connected.");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    if (vault.getLocal())
+        pc.initHTTP();
+    return true;
 }
 //WiFiUDP udp;
 //NTPClient timeClient(udp, "time.google.com",0,6000);
 
 void setup()
 {
-  pinMode(LED, OUTPUT);
-  pinMode(0, INPUT);
-  Serial.begin(9600);
+    pinMode(LED, OUTPUT);
+    pinMode(0, INPUT);
+    Serial.begin(9600);
 
-  // JUMPER recovery
-  pinMode(jumper, INPUT_PULLDOWN_16);
-  if (digitalRead(jumper) == 1)
-  {
-    Recovery recovery(15, &mqtls, &vault);
-  }
-  pinMode(jumper, OUTPUT);
+    // JUMPER recovery
+    pinMode(jumper, INPUT_PULLDOWN_16);
+    if (digitalRead(jumper) == 1)
+    {
+        Recovery recovery(15, &mqtls, &vault);
+    }
+    pinMode(jumper, OUTPUT);
 
-  
-  if(!vault.init(avoid_settings)) Recovery recovery(15, &mqtls, &vault);
+    if (!vault.init(avoid_settings))
+        Recovery recovery(15, &mqtls, &vault);
 
-  if (!wifi_boot())
-  {
-    Serial.println("Failed to connect to wifi!");
-    WiFi.disconnect();
-    Recovery recovery(2, &mqtls, &vault);
-    ESP.restart();
-  }
+    if (!wifi_boot())
+    {
+        Serial.println("Failed to connect to wifi!");
+        WiFi.disconnect();
+        Recovery recovery(2, &mqtls, &vault);
+        ESP.restart();
+    }
 
-  //timeClient.begin();
+    //timeClient.begin();
 }
 
 void loop()
 {
-  delay(150);
-  /*timeClient.update();
+    delay(150);
+    /*timeClient.update();
   Serial.println(timeClient.getFormattedTime());*/
-  pc.loop();
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    wifi_boot();
-  }
+    pc.loop();
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        int wait = 0;
+        while (WiFi.status() != WL_CONNECTED)
+        {
+            wait++;
+            yield();
+            if (wait > 30)
+            {
+                ESP.restart();
+            }
+            delay(500);
+        }
+    }
 }
