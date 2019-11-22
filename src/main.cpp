@@ -30,7 +30,6 @@ bool wifi_boot()
 {
     if (vault.getLocal())
         pc.stopHTTP();
-    WiFi.mode(WIFI_STA);
     WiFi.begin(vault.getSSID(), vault.getWiFipw());
     if (vault.getStatic())
     {
@@ -69,7 +68,8 @@ void setup()
     pinMode(LED, OUTPUT);
     pinMode(0, INPUT);
     Serial.begin(9600);
-
+    WiFi.mode(WIFI_STA);
+    
     // JUMPER recovery
     pinMode(jumper, INPUT_PULLDOWN_16);
     if (digitalRead(jumper) == 1)
@@ -98,18 +98,8 @@ void loop()
     /*timeClient.update();
   Serial.println(timeClient.getFormattedTime());*/
     pc.loop();
-    if (WiFi.status() != WL_CONNECTED)
+    while (WiFi.status() != WL_CONNECTED)
     {
-        int wait = 0;
-        while (WiFi.status() != WL_CONNECTED)
-        {
-            wait++;
-            yield();
-            if (wait > 30)
-            {
-                ESP.restart();
-            }
-            delay(500);
-        }
+        wifi_boot();
     }
 }

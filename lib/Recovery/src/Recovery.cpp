@@ -40,7 +40,7 @@ while(true){
   server->handleClient();
   if((millis() - timeout) > timeout_reboot){
     digitalWrite(LED, HIGH);
-    return;
+    ESP.restart();
   }
 }
 }

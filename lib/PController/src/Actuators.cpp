@@ -21,7 +21,6 @@ void PController::on(void){
 }
 
 void PController::off(void){
-    mqtls->publish(topic,"1", "4");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
     delay(500);

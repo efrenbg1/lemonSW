@@ -55,10 +55,7 @@ void PController::callback(String msg)
         case '2':
             on();
             break;
-        default:
-            if(!vault->getLocal()) mqtls->publish(topic, "1", String(action));
         }
-        
     }
     else if (msg.equals("1"))
     {
