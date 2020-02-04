@@ -8,6 +8,7 @@ PController::PController(unsigned int _GPIO, String _server, MqTLS* _mqtls, EzVa
 }
 
 void PController::on(void){
+    Serial.println("\nTurning on...");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
     delay(500);
@@ -21,6 +22,7 @@ void PController::on(void){
 }
 
 void PController::off(void){
+    Serial.println("\nTurning off...");
     pinMode(GPIO,OUTPUT);
     digitalWrite(GPIO,HIGH);
     delay(500);

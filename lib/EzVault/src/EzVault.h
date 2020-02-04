@@ -5,13 +5,13 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
-#define slots 10
-#define permanent 6
+#define slots 11
+#define permanent 7
 
 class EzVault {
     int slotStart[slots];
     int slotEnd[slots];
-    int slotSize[slots] = {1, 1, 32, 128, 30, 30, 15, 15, 15, 15};
+    int slotSize[slots] = {1, 1, 1, 32, 128, 30, 30, 15, 15, 15, 15};
     String values[permanent];
     IPAddress staticIP[4];
     public:
@@ -24,6 +24,7 @@ class EzVault {
         String getPW(void);
         bool getLocal(void);
         bool getStatic(void);
+        bool getAO(void);
         IPAddress getIP(void);
         IPAddress getGateway(void);
         IPAddress getNetmask(void);

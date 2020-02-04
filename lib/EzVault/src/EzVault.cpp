@@ -15,7 +15,7 @@ EzVault::EzVault(void)
 //// Avoid Config ////
 void EzVault::avoid_config(void)
 { //local, static IP
-  String defaults[10] = {"0", "0", "Mi_527", "", "", "", "192.168.1.60", "192.168.1.1", "255.255.255.0", "8.8.8.8"};
+  String defaults[11] = {"0", "0", "1", "ed", "", "ef", "", "192.168.43.200", "192.168.43.1", "255.255.255.0", "8.8.8.8"};
   save(defaults);
 }
 
@@ -25,10 +25,33 @@ bool EzVault::init(bool avoid)
   {
     avoid_config();
   }
+
+  if ((char)EEPROM.read(5) != '\0') //If db is in older version, update it to keep old config
+  {
+    Serial.println("Updating database to new version...");
+    int oldSlotSize[slots] = {1, 1, 32, 128, 30, 30, 15, 15, 15, 15, 1};
+    for (int i = 1; i < slots; i++)
+    {
+      slotSize[i] = oldSlotSize[i];
+      slotStart[i] = slotEnd[i - 1] + 1;
+      slotEnd[i] = slotStart[i] + slotSize[i];
+    }
+    String values[] = {read(0), read(1), "0", read(2), read(3), read(4), read(5), read(6), read(7), read(8), read(9), read(10)};
+    int newSlotSize[slots] = {1, 1, 1, 32, 128, 30, 30, 15, 15, 15, 15};
+    for (int i = 1; i < slots; i++)
+    {
+      slotSize[i] = newSlotSize[i];
+      slotStart[i] = slotEnd[i - 1] + 1;
+      slotEnd[i] = slotStart[i] + slotSize[i];
+    }
+    save(values);
+    Serial.print("Done");
+  }
+
   for (int i = 0; i < permanent; i++) //Verify those values necesary (wifi and settings)
   {
     values[i] = read(i);
-    if (values[i] == "" && i < 4) //critical values are all before slot 4
+    if (values[i] == "" && i < 5) //critical values are all before slot 5
     {
       Serial.println("Not configured...");
       return false;
@@ -36,8 +59,8 @@ bool EzVault::init(bool avoid)
   }
   Serial.println("");
   Serial.println("\nCurrent settings:\n");
-  Serial.println("-SSID: " + values[2]);
-  Serial.println("-Account: " + values[4]);
+  Serial.println("-SSID: " + values[3]);
+  Serial.println("-Account: " + values[5]);
   Serial.println(String("-MAC: " + WiFi.macAddress()));
   Serial.println("");
   return true;
@@ -74,7 +97,8 @@ String EzVault::read(int slot)
   {
     if ((char)EEPROM.read(i) == '\0' || isPrintable((char)EEPROM.read(i)) == 0)
     {
-      if(i == 0) return "";
+      if (i == 0)
+        return "";
       break;
     }
     else

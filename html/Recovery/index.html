@@ -477,9 +477,20 @@
         <form>
             <ul class="flex-outer container">
                 <li>
-                    <label>Enable local dashboard (disables server connection):</label>
+                    <label>Local dashboard (disables server connection):</label>
                     <label class="custom-box" style="max-width: 25px;">
                         <input type="checkbox" id="local">
+                        <span class="checkmark"></span>
+                    </label>
+                </li>
+            </ul>
+        </form>
+        <form>
+            <ul class="flex-outer container">
+                <li>
+                    <label>Wi-Fi track (turns on/off the PC based on the Wi-Fi status):</label>
+                    <label class="custom-box" style="max-width: 25px;">
+                        <input type="checkbox" id="ao">
                         <span class="checkmark"></span>
                     </label>
                 </li>
@@ -700,6 +711,7 @@
     function save() {
         var static = document.getElementById("static").checked;
         var local = document.getElementById("local").checked;
+        var ao = document.getElementById("ao").checked;
         var url = 'http://192.168.1.1/save';
         if (static) {
             url = url + '?static=1';
@@ -723,6 +735,11 @@
             url = url + '&local=1'; 
         } else {
             url = url + '&local=0';
+        }
+        if(ao){
+            url = url + '&ao=1'; 
+        } else {
+            url = url + '&ao=0';
         }
         req(url, function (status, response) {
             if (status === 200) {

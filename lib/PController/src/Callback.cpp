@@ -10,13 +10,20 @@ void PController::callback(String msg)
             if(WiFi.status() != WL_CONNECTED) return; //Let the main loop handle the reconnect
             Serial.print("Connecting to server...");
             digitalWrite(2, LOW);
-            if (mqtls->connect(address, 2443, vault->getUser(), vault->getPW()) == 0)
+            int result = mqtls->connect(address, 2443, vault->getUser(), vault->getPW());
+            if (result == 0)
             {
                 mqtls->lastwill(topic, "0", "9");
                 mqtls->publish(topic, "1", "6");
-                mqtls->publish(topic, "2", "3"); //version running
+                mqtls->publish(topic, "2", "5"); //version running
                 Serial.println("Done");
                 failed = 0;
+            }
+            else if(result == 9)
+            {
+                stopHTTP();
+                Recovery recovery(5, mqtls, vault);
+                ESP.restart();
             }
             else
             {
@@ -27,6 +34,7 @@ void PController::callback(String msg)
                     failed = 0;
                     stopHTTP();
                     Recovery recovery(2, mqtls, vault);
+                    ESP.restart();
                 }
             }
             digitalWrite(2, HIGH);

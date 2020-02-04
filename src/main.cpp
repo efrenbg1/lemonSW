@@ -1,14 +1,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
-#include <WiFiUdp.h>
 #include <Arduino.h>
 #include <EzVault.h>
 #include <MqTLS.h>
 #include <PController.h>
 #include <Recovery.h>
-#include <WiFiUdp.h>
-#include <NTPClient.h>
 
 #define LED 2
 #define PowerSW 4
@@ -21,6 +18,8 @@
 #define server_port 2443
 
 #define avoid_settings false
+
+int tries = 0;
 
 MqTLS mqtls(fingerprint);
 EzVault vault;
@@ -44,13 +43,33 @@ bool wifi_boot()
         yield();
         if (timeout > 45)
         {
+            if (vault.getAO())
+            {
+                int n = WiFi.scanNetworks();
+                bool found = false;
+                for (int i = 0; i < n; ++i)
+                {
+                    if (WiFi.SSID(i) == vault.getSSID())
+                        found = true;
+                }
+                if (!found)
+                {
+                    tries++;
+                    Serial.print("WiFi not found: ");
+                    Serial.println(tries);
+                    if (pc.getStatus() == '1' && tries > 3)
+                        pc.off();
+                }
+            }
             return false;
         }
         delay(250);
         digitalWrite(LED, HIGH);
         Serial.print(".");
+        pc.loop();
         delay(250);
         digitalWrite(LED, LOW);
+        pc.loop();
     }
     digitalWrite(LED, HIGH);
     Serial.println("Connected.");
@@ -58,10 +77,9 @@ bool wifi_boot()
     Serial.println(WiFi.localIP());
     if (vault.getLocal())
         pc.initHTTP();
+    tries = 0;
     return true;
 }
-//WiFiUDP udp;
-//NTPClient timeClient(udp, "time.google.com",0,6000);
 
 void setup()
 {
@@ -69,7 +87,7 @@ void setup()
     pinMode(0, INPUT);
     Serial.begin(9600);
     WiFi.mode(WIFI_STA);
-    
+
     // JUMPER recovery
     pinMode(jumper, INPUT_PULLDOWN_16);
     if (digitalRead(jumper) == 1)
@@ -88,15 +106,11 @@ void setup()
         Recovery recovery(2, &mqtls, &vault);
         ESP.restart();
     }
-
-    //timeClient.begin();
 }
 
 void loop()
 {
     delay(150);
-    /*timeClient.update();
-  Serial.println(timeClient.getFormattedTime());*/
     pc.loop();
     while (WiFi.status() != WL_CONNECTED)
     {

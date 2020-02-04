@@ -99,9 +99,20 @@
 <form>
 <ul class="flex-outer container">
 <li>
-<label>Enable local dashboard (disables server connection):</label>
+<label>Local dashboard (disables server connection):</label>
 <label class=custom-box style=max-width:25px>
 <input type=checkbox id=local>
+<span class=checkmark></span>
+</label>
+</li>
+</ul>
+</form>
+<form>
+<ul class="flex-outer container">
+<li>
+<label>Wi-Fi track (turns on/off the PC based on the Wi-Fi status):</label>
+<label class=custom-box style=max-width:25px>
+<input type=checkbox id=ao>
 <span class=checkmark></span>
 </label>
 </li>
@@ -137,10 +148,11 @@ check();}else{hide("connecting");document.getElementById("connected").innerHTML=
 show("connected");show("next");}}else if(status!==204){alert("Reconnect to the WiFi before continuing...");check();}});}
 function progress(){hideall();var one=document.getElementById('1');var two=document.getElementById('2');var three=document.getElementById('3');if(step===1){one.classList.add("active");two.classList.remove("active");three.classList.remove("active");location.reload();}else if(step===2){one.classList.add("active");two.classList.add("active");three.classList.remove("active");show("mq");show("back");show("skip");}else if(step===3){one.classList.add("active");two.classList.add("active");three.classList.add("active");show("options");show("back");show("save");hide("staticForm");}}
 function connectMq(){var mq_user=document.getElementById('userMq').value;var mq_pw=document.getElementById('pwMq').value;var url="http://192.168.1.1/mqtt?user="+mq_user+"&pw="+mq_pw;hideall();show("connectingMq");req(url,function(status,response){if(status===200){hide("connectingMq");show("mq");show("back");show("skip");var s=Number(response);if(s===9){alert("Wrong user or password");}else if(s<0){alert("Can't reach server, please check WiFi");}else if(s===0){alert("Connected!");step=3;progress();}else{alert("Something went wrong :(");}}else{hideall();show("error");show("back");}});}
-function save(){var static=document.getElementById("static").checked;var local=document.getElementById("local").checked;var url='http://192.168.1.1/save';if(static){url=url+'?static=1';var ip=document.getElementById("ip").value;var gateway=document.getElementById("gateway").value;var netmask=document.getElementById("netmask").value;var dns=document.getElementById("dns").value;var r=/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;if(!(r.test(ip)&&r.test(gateway)&&r.test(netmask)&&r.test(dns))){alert("Invalid values! Did you entered correct IP, netmask, gateway or DNS?")
+function save(){var static=document.getElementById("static").checked;var local=document.getElementById("local").checked;var ao=document.getElementById("ao").checked;var url='http://192.168.1.1/save';if(static){url=url+'?static=1';var ip=document.getElementById("ip").value;var gateway=document.getElementById("gateway").value;var netmask=document.getElementById("netmask").value;var dns=document.getElementById("dns").value;var r=/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;if(!(r.test(ip)&&r.test(gateway)&&r.test(netmask)&&r.test(dns))){alert("Invalid values! Did you entered correct IP, netmask, gateway or DNS?")
 return;}
 url=url+'&ip='+ip;url=url+'&gateway='+gateway;url=url+'&netmask='+netmask;url=url+'&dns='+dns;}else{url=url+'?static=0&ip=&gateway=&netmask=&dns=';}
 if(local){url=url+'&local=1';}else{url=url+'&local=0';}
+if(ao){url=url+'&ao=1';}else{url=url+'&ao=0';}
 req(url,function(status,response){if(status===200){window.location.replace("http://192.168.1.1/reboot");}else{alert("Something went wrong");}});}</script>
 <script>function list(){var x,i,j,selElmnt,a,b,c;x=document.getElementsByClassName("custom-select");for(i=0;i<x.length;i++){selElmnt=x[i].getElementsByTagName("select")[0];a=document.createElement("DIV");a.setAttribute("class","select-selected");a.innerHTML=selElmnt.options[selElmnt.selectedIndex].innerHTML;x[i].appendChild(a);b=document.createElement("DIV");b.setAttribute("class","select-items select-hide");for(j=0;j<selElmnt.length;j++){c=document.createElement("DIV");c.innerHTML=selElmnt.options[j].innerHTML;c.addEventListener("click",function(e){var y,i,k,s,h;s=this.parentNode.parentNode.getElementsByTagName("select")[0];h=this.parentNode.previousSibling;for(i=0;i<s.length;i++){if(s.options[i].innerHTML==this.innerHTML){s.selectedIndex=i;h.innerHTML=this.innerHTML;y=this.parentNode.getElementsByClassName("same-as-selected");for(k=0;k<y.length;k++){y[k].removeAttribute("class");}
 this.setAttribute("class","same-as-selected");break;}}

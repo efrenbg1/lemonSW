@@ -11,22 +11,22 @@ void PController::loop(void)
     {
         samples[sample] = analogRead(A0);
         sample++;
-        if(vault->getLocal()) http.handleClient();
+        if (vault->getLocal())
+            http.handleClient();
     }
     else
     {
         sample = 0;
-        if(!vault->getLocal()) callback("");
         int last = samples[0];
         int changes = 0;
-        int on = 0;
+        int high = 0;
         //String debug = "";
         for (int i = 0; i < 15; i++)
         {
             //debug = debug + "/" + (String)samples[i];
             if (samples[i] > 500)
             { //high
-                on++;
+                high++;
                 if ((samples[i] - last) > 200) //going higher (correcting for capacitance)
                 {
                     changes++;
@@ -45,11 +45,11 @@ void PController::loop(void)
         //status checker
         if (changes == 0)
         {
-            if (on == 15)
+            if (high == 15)
             {
                 stat = '1';
             }
-            else if (on == 0)
+            else if (high == 0)
             {
                 stat = '0';
             }
@@ -109,7 +109,7 @@ void PController::loop(void)
             }
         }
 
-        if (!vault->getLocal())
+        if (!vault->getLocal() && WiFi.status() == WL_CONNECTED)
         {
             mqtls->publish(topic, "0", String(stat));
 
@@ -118,9 +118,19 @@ void PController::loop(void)
             //Serial.println(debug);
             //mqtls->publish(topic, "2", debug);
 
-            if(oldAction != action){
+            if (oldAction != action)
+            {
                 mqtls->publish(topic, "1", String(action));
             }
         }
+
+        if (vault->getAO() && WiFi.status() == WL_CONNECTED)
+        {   
+            if (getStatus() == '0' || getStatus() == '2') on();
+        }
+
+        
+        if (!vault->getLocal())
+            callback("");
     }
 }

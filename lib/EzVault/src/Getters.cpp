@@ -6,13 +6,18 @@ bool EzVault::getLocal()
     return values[0].equals("1");
 }
 
+bool EzVault::getAO()
+{
+    return values[2].equals("1");
+}
+
 bool EzVault::getStatic()
 {
     if (values[1].equals("1"))
     {
         for (int i = 0; i < 4; i++)
         {
-            if (!staticIP[i].fromString(read(6 + i)))
+            if (!staticIP[i].fromString(read(7 + i)))
             {
                 Serial.println("\nStatic IP not properly configured!!!\n");
                 return false;
@@ -48,17 +53,17 @@ IPAddress EzVault::getDNS(void)
 
 String EzVault::getSSID(void)
 {
-    return values[2];
+    return values[3];
 }
 String EzVault::getWiFipw(void)
 {
-    return values[3];
+    return values[4];
 }
 String EzVault::getUser(void)
 {
-    return values[4];
+    return values[5];
 }
 String EzVault::getPW(void)
 {
-    return values[5];
+    return values[6];
 }

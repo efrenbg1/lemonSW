@@ -75,7 +75,7 @@ void Recovery::mqtls_check(void)
 void Recovery::save(void)
 {
   timeout = millis();
-  String values[] = {server->arg("local"), server->arg("static"), ssid, wifi_pw, user, pw, server->arg("ip"), server->arg("gateway"), server->arg("netmask"), server->arg("dns")};
+  String values[] = {server->arg("local"), server->arg("static"), server->arg("ao"), ssid, wifi_pw, user, pw, server->arg("ip"), server->arg("gateway"), server->arg("netmask"), server->arg("dns")};
   if (vault->save(values))
   {
     server->send(200, "text/plain", "");
