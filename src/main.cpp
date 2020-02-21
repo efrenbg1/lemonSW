@@ -19,6 +19,8 @@
 
 #define avoid_settings false
 
+#define AO_affinity 5
+
 int tries = 0;
 
 MqTLS mqtls(fingerprint);
@@ -57,7 +59,7 @@ bool wifi_boot()
                     tries++;
                     Serial.print("WiFi not found: ");
                     Serial.println(tries);
-                    if (pc.getStatus() == '1' && tries > 3)
+                    if (pc.getStatus() == '1' && tries > AO_affinity)
                         pc.off();
                 }
             }

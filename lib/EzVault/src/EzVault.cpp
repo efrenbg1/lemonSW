@@ -16,6 +16,8 @@ EzVault::EzVault(void)
 void EzVault::avoid_config(void)
 { //local, static IP
   String defaults[11] = {"0", "0", "1", "ed", "", "ef", "", "192.168.43.200", "192.168.43.1", "255.255.255.0", "8.8.8.8"};
+  //String defaults[11] = {"0", "0", "1", "edilizia", "Edilizia1", "efren@boyarizo.es", "1Q2w3e4r", "192.168.43.200", "192.168.43.1", "255.255.255.0", "8.8.8.8"};
+  //String defaults[11] = {"0", "0", "1", "Mi_527", "Eer527!!", "efren@boyarizo.es", "1Q2w3e4r", "192.168.43.200", "192.168.43.1", "255.255.255.0", "8.8.8.8"};
   save(defaults);
 }
 
