@@ -1,6 +1,5 @@
 #include "MqTLS.h"
 
-
 MqTLS::MqTLS(String thumbprint)
 {
   client.setTimeout(3000);
@@ -34,8 +33,6 @@ int MqTLS::publish(String topic, String slot, String payload)
   return (1);
 }
 
-
-
 //-1 not connected to server
 //1 Publish done
 int MqTLS::lastwill(String topic, String slot, String payload)
@@ -65,6 +62,35 @@ int MqTLS::lastwill(String topic, String slot, String payload)
   }
 }
 
+//-1 not connected to server
+//1 Publish done
+int MqTLS::watch(String topic)
+{
+  if (!client.connected())
+  {
+    return -1;
+  }
+  String command = "MQS4" + getlength(topic) + topic + "\n";
+  client.print(command);
+  String line = "";
+  while (client.connected() || client.available() > 0)
+  {
+    if (client.available())
+    {
+      line = client.readStringUntil('\n');
+      break;
+    }
+  }
+  if (line.indexOf("MQS4") > -1)
+  {
+    return 1;
+  }
+  else
+  {
+    return -1;
+  }
+}
+
 //-3 protocol error
 //-2 timed out
 //-1 not connected to server
@@ -72,6 +98,7 @@ int MqTLS::lastwill(String topic, String slot, String payload)
 //7 no data in topic
 //8 no valid acls
 //9 error auth
+//TODO retrieve cleans previous data
 int MqTLS::retrieve(String topic, String slot, String *payload)
 {
   if (!client.connected())
@@ -88,13 +115,13 @@ int MqTLS::retrieve(String topic, String slot, String *payload)
   client.print(command);
   String line = "";
   while (client.connected() || client.available() > 0)
+  {
+    if (client.available())
     {
-      if (client.available())
-      {
-        line = client.readStringUntil('\n');
-        break;
-      }
+      line = client.readStringUntil('\n');
+      break;
     }
+  }
   if (line.indexOf("MQS") == 0)
   {
     int resp = String(line.substring(3, 4)).toInt();
@@ -111,6 +138,32 @@ int MqTLS::retrieve(String topic, String slot, String *payload)
   }
   *payload = "";
   return (-3);
+}
+
+//-3 protocol error
+//-1 not connected to server
+//5 watch retrieve done
+//7 no data received
+// FIXME comprobar limites parámetros substring
+int MqTLS::callback(String *slot, String *payload)
+{
+  *payload = "";
+  if (!client.connected())
+    return -1;
+  if (client.available() == 0)
+    return 7;
+  String line = client.readStringUntil('\n');
+  if (line.length() > 7 && line.indexOf("MQS5") == 0)
+  {
+    *slot = String(line.substring(4, 5)).toInt();
+    unsigned int pay_end = String(line.substring(5, 7)).toInt();
+    if (line.length() > (7 + pay_end - 1))
+    {
+      *payload = line.substring(7, 7 + pay_end);
+      return 5;
+    }
+  }
+  return -3;
 }
 
 //-3 protocol error
@@ -131,15 +184,20 @@ int MqTLS::connect(String addr, int port, String user, String pw)
   {
     client.print(String("MQS0" + getlength(user) + user + getlength(pw) + pw + "\n"));
     String line = "";
-    while (client.connected() || client.available() > 0) {
-      if (client.available()) {
+    while (client.connected() || client.available() > 0)
+    {
+      if (client.available())
+      {
         line = client.readStringUntil('\n');
         break;
       }
     }
-    if (line.indexOf("MQS0") == 0) {
+    if (line.indexOf("MQS0") == 0)
+    {
       return (0);
-    } else {
+    }
+    else
+    {
       return (9);
     }
   }

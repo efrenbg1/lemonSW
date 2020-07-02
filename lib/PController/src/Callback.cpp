@@ -2,56 +2,13 @@
 
 void PController::callback(String msg)
 {
-    if (msg.equals("") && !vault->getLocal())
-    {
-        int status = mqtls->retrieve(topic, "1", &msg);
-        if (status == -1)
-        {
-            if(WiFi.status() != WL_CONNECTED) return; //Let the main loop handle the reconnect
-            Serial.print("Connecting to server...");
-            digitalWrite(2, LOW);
-            int result = mqtls->connect(address, 2443, vault->getUser(), vault->getPW());
-            if (result == 0)
-            {
-                mqtls->lastwill(topic, "0", "9");
-                mqtls->publish(topic, "1", "6");
-                mqtls->publish(topic, "2", "5"); //version running
-                Serial.println("Done");
-                failed = 0;
-            }
-            else if(result == 9)
-            {
-                stopHTTP();
-                Recovery recovery(5, mqtls, vault);
-                ESP.restart();
-            }
-            else
-            {
-                failed++;
-                Serial.println("Failed");
-                if (failed > 15)
-                {
-                    failed = 0;
-                    stopHTTP();
-                    Recovery recovery(2, mqtls, vault);
-                    ESP.restart();
-                }
-            }
-            digitalWrite(2, HIGH);
-        }
-        else if (status != 2 && status != 7)
-        {
-            Serial.print("Failed to retrive data: ");
-            Serial.println();
-            return;
-        }
-    }
-    Serial.print("Response: ");
+    Serial.print("Command: ");
     Serial.println(msg);
     if (msg.equals("0"))
     {
         action = '4';
-        if(!vault->getLocal()) mqtls->publish(topic, "1", String(action));
+        if (!vault->getLocal())
+            mqtls->publish(topic, "1", String(action));
         switch (getStatus())
         {
         case '0':
@@ -68,7 +25,8 @@ void PController::callback(String msg)
     else if (msg.equals("1"))
     {
         action = '4';
-        if(!vault->getLocal()) mqtls->publish(topic,"1", String(action));
+        if (!vault->getLocal())
+            mqtls->publish(topic, "1", String(action));
         force();
     }
     else if (msg.equals("8"))

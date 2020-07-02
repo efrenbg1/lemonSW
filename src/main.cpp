@@ -14,10 +14,10 @@
 
 #define fingerprint "42 DC 8A 31 86 ED B5 31 D1 CF 87 21 96 CD 8A E7 A7 32 99 FE"
 
-#define server_ip "rmote.app"
+#define server_ip "192.168.1.2"
 #define server_port 2443
 
-#define avoid_settings false
+#define avoid_settings true
 
 #define AO_affinity 5
 
@@ -68,10 +68,8 @@ bool wifi_boot()
         delay(250);
         digitalWrite(LED, HIGH);
         Serial.print(".");
-        pc.loop();
         delay(250);
         digitalWrite(LED, LOW);
-        pc.loop();
     }
     digitalWrite(LED, HIGH);
     Serial.println("Connected.");

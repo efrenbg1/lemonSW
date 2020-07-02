@@ -12,7 +12,61 @@ void PController::loop(void)
         samples[sample] = analogRead(A0);
         sample++;
         if (vault->getLocal())
+        {
             http.handleClient();
+        }
+        else
+        {
+            int status = mqtls->callback(&slot, &msg);
+            if (status == 7)
+            {
+                return;
+            }
+            else if (status == -1)
+            {
+                if (WiFi.status() != WL_CONNECTED)
+                    return; //Let the main loop handle the reconnect
+                Serial.print("Connecting to server...");
+                digitalWrite(2, LOW);
+                int result = mqtls->connect(address, 2443, vault->getUser(), vault->getPW());
+                if (result == 0)
+                {
+                    mqtls->lastwill(topic, "0", "9");
+                    mqtls->watch(topic);
+                    mqtls->publish(topic, "1", "6");
+                    mqtls->publish(topic, "2", "5"); //version running
+                    Serial.println("Done");
+                    failed = 0;
+                }
+                else if (result == 9)
+                {
+                    stopHTTP();
+                    Recovery recovery(5, mqtls, vault);
+                    ESP.restart();
+                }
+                else
+                {
+                    failed++;
+                    Serial.println("Failed");
+                    if (failed > 15)
+                    {
+                        failed = 0;
+                        stopHTTP();
+                        Recovery recovery(2, mqtls, vault);
+                        ESP.restart();
+                    }
+                }
+                digitalWrite(2, HIGH);
+            }
+            else if (status != 5)
+            {
+                Serial.print("Failed to retrive data: ");
+                Serial.println(status);
+                return;
+            }
+            if (slot == "1")
+                callback(msg);
+        }
     }
     else
     {
@@ -112,25 +166,20 @@ void PController::loop(void)
         if (!vault->getLocal() && WiFi.status() == WL_CONNECTED)
         {
             mqtls->publish(topic, "0", String(stat));
-
-            //For debugging purposes only
-            //debug = debug + "|" + changes + "|" + on;
-            //Serial.println(debug);
-            //mqtls->publish(topic, "2", debug);
-
             if (oldAction != action)
             {
                 mqtls->publish(topic, "1", String(action));
             }
+            //For debugging purposes only
+            //debug = debug + "|" + changes + "|" + on;
+            //Serial.println(debug);
+            //mqtls->publish(topic, "2", debug);
         }
 
         if (vault->getAO() && WiFi.status() == WL_CONNECTED)
-        {   
-            if (getStatus() == '0' || getStatus() == '2') on();
+        {
+            if (getStatus() == '0' || getStatus() == '2')
+                on();
         }
-
-        
-        if (!vault->getLocal())
-            callback("");
     }
 }
