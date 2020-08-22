@@ -29,6 +29,7 @@ void PController::loop(void)
                 Serial.print("Connecting to server...");
                 digitalWrite(2, LOW);
                 int result = mqtls->connect(address, 2443, vault->getUser(), vault->getPW());
+                digitalWrite(2, HIGH);
                 if (result == 0)
                 {
                     mqtls->lastwill(topic, "0", "9");
@@ -55,8 +56,8 @@ void PController::loop(void)
                         Recovery recovery(2, mqtls, vault);
                         ESP.restart();
                     }
+                    delay(1000);
                 }
-                digitalWrite(2, HIGH);
             }
             else if (status != 5)
             {
