@@ -7,17 +7,19 @@
 class MqTLS
 {
     WiFiClientSecure client;
+    String secBuff;
 
 public:
     MqTLS(String);
     int publish(String, String, String);
-    int connect(String, int, String, String);
+    int connect(String, int, String, String, bool);
     int lastwill(String, String, String);
     int watch(String);
     int retrieve(String, String, String *);
     int callback(String *, String *);
+
 private:
-    String getlength(String &);
+    String enc(String &);
 };
 
 #endif
